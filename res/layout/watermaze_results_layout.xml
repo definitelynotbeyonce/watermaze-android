@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" 
+    android:id="@+id/watermaze_results_layout">
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:orientation="vertical" >
+
+        <GridLayout
+            android:layout_width="88dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.07"
+            android:columnCount="2" >
+
+            <TextView
+                android:id="@+id/results_trialNo_prompt"
+                android:layout_column="0"
+                android:layout_gravity="left|top"
+                android:layout_row="0"
+                android:text="@string/results_trialNo" />
+
+            <TextView
+                android:id="@+id/results_trialNo"
+                android:layout_column="1"
+                android:layout_gravity="left|top"
+                android:layout_row="0"/>
+
+            <TextView
+                android:id="@+id/results_time_prompt"
+                android:layout_column="0"
+                android:layout_gravity="left|bottom"
+                android:layout_row="1"
+                android:text="@string/results_time" />
+			<TextView
+                android:id="@+id/results_time"
+                android:layout_column="1"
+                android:layout_gravity="left|top"
+                android:layout_row="1"/>
+			
+        </GridLayout>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:orientation="vertical" 
+        android:id="@+id/results_results_box">
+
+        <TextView
+            android:id="@+id/results_results_box_prompt"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/results_results_box" />
+
+        <View
+            android:id="@+id/results_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+    </LinearLayout>
+
+</LinearLayout>
