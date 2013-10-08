@@ -20,6 +20,7 @@
         android:theme="@style/AppTheme" >
         <activity
             android:name="com.example.watermaze.WatermazeMainLayoutActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize"
             android:label="@string/title_activity_watermaze_main_layout" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

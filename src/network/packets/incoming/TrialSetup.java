@@ -1,9 +1,11 @@
 package network.packets.incoming;
 
+import android.util.Log;
+
 import com.example.watermaze.WaterMaze_Results;
 
 
-public class TrialSetup extends ResultsIncomingPacket{
+public class TrialSetup extends ResultsInboundPacket{
 	//all fields are public so this essentially becomes a c struct.  
 	public int trialNo;
 	public float timeLimit;
@@ -13,17 +15,17 @@ public class TrialSetup extends ResultsIncomingPacket{
 	public float[] zero_zero;
 	public int startingPos;
 	public int finishPos;
-	
-	//TODO: cues? ArrayList<Cue> cues;
+	protected boolean ready;
 	
 	public TrialSetup(WaterMaze_Results results)
 	{
 		super(results);
 		type = "Trial Setup";
-		// TODO: for cues: cues = new ArrayList<Cue>();
+		ready = false;
 	}
 	@Override
 	public void addLine(String line) {
+		Log.i("Trial Setup", line);
 		//Parse line
 		String[] tokens = line.split("\\|");
 		for(String s: tokens)
@@ -71,9 +73,18 @@ public class TrialSetup extends ResultsIncomingPacket{
 			}
 		}
 	}
+	
+	public void finish()
+	{
+		ready = true;
+	}
+	
+	public boolean isReady()
+	{
+		return ready;
+	}
 	@Override
 	public void takeAction() {
-		// TODO Auto-generated method stub
-		
+		resultsTab.addTrial(this);		
 	}
 }

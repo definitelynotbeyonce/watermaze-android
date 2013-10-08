@@ -1,54 +1,55 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/watermaze_results_layout"
     android:layout_width="match_parent"
-    android:layout_height="match_parent" 
-    android:id="@+id/watermaze_results_layout">
+    android:layout_height="match_parent"
+    android:orientation="horizontal" >
 
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:orientation="vertical" >
+    
+    <TableLayout
+        android:id="@+id/results_trial_legend"
+        android:layout_width="0dip"
+        android:layout_weight=".2"
+        android:layout_height="match_parent" >
 
-        <GridLayout
-            android:layout_width="88dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="0.07"
-            android:columnCount="2" >
+        <TableRow
+            android:id="@+id/results_table_header"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" >
 
             <TextView
-                android:id="@+id/results_trialNo_prompt"
-                android:layout_column="0"
-                android:layout_gravity="left|top"
-                android:layout_row="0"
+                android:id="@+id/resluts_trialNo_prompt"
+                android:layout_width="0dip"
+        		android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:gravity="center"
                 android:text="@string/results_trialNo" />
 
             <TextView
-                android:id="@+id/results_trialNo"
-                android:layout_column="1"
-                android:layout_gravity="left|top"
-                android:layout_row="0"/>
+                android:id="@+id/results_line_color_prompt"
+                android:layout_width="0dip"
+        		android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="@string/results_line_color" />
 
             <TextView
-                android:id="@+id/results_time_prompt"
-                android:layout_column="0"
-                android:layout_gravity="left|bottom"
-                android:layout_row="1"
-                android:text="@string/results_time" />
-			<TextView
-                android:id="@+id/results_time"
-                android:layout_column="1"
-                android:layout_gravity="left|top"
-                android:layout_row="1"/>
-			
-        </GridLayout>
+                android:id="@+id/results_time_elapsed_prompt"
+                android:layout_width="0dip"
+        		android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="@string/results_time_elapsed" />
 
-    </LinearLayout>
-
+        </TableRow>
+    </TableLayout>
+    
     <LinearLayout
-        android:layout_width="wrap_content"
+        android:id="@+id/results_results_box"
+        android:layout_width="0dip"
+        android:layout_weight=".8"
         android:layout_height="match_parent"
-        android:orientation="vertical" 
-        android:id="@+id/results_results_box">
+        android:orientation="vertical" >
 
         <TextView
             android:id="@+id/results_results_box_prompt"
@@ -56,11 +57,28 @@
             android:layout_height="wrap_content"
             android:text="@string/results_results_box" />
 
-        <View
-            android:id="@+id/results_view"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
+        <LinearLayout
+            android:orientation="vertical"
+            android:id="@+id/results_view" 
+            android:layout_width="match_parent"
+            android:layout_height="0dip"
+            android:layout_weight=".75"
+            android:gravity="center">
+        </LinearLayout>
+        
+		<HorizontalScrollView
+            android:id="@+id/results_hsv"
+            android:layout_width="match_parent"
+            android:layout_height="0dip"
+            android:layout_weight=".25" >
 
+            <LinearLayout
+                android:id="@+id/results_thumbnails"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:orientation="horizontal" >
+            </LinearLayout>
+        </HorizontalScrollView>
     </LinearLayout>
 
 </LinearLayout>

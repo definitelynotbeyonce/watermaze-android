@@ -22,5 +22,10 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/connect_connect" />
+    <Button
+        android:id="@+id/connect_disconnect"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/disconnect" />
  
 </RadioGroup>

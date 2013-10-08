@@ -7,12 +7,17 @@ import java.io.PrintWriter;
 import java.net.Socket;
 import java.net.UnknownHostException;
 
-import network.packets.outgoing.ConnectionType;
 import network.packets.outgoing.OutboundPacket;
 
 
 import com.example.watermaze.WaterMaze_Control;
+import com.example.watermaze.WaterMaze_Results;
+
+import android.app.Activity;
+import android.content.Context;
+import android.os.AsyncTask;
 import android.util.Log;
+import android.widget.Toast;
 
 public class Controller {
 	protected Socket sock;
@@ -24,163 +29,132 @@ public class Controller {
 	
 	protected ControllerInput calVRin;
 	protected ControllerOutput calVRout;
+	protected WaterMaze_Control wmc;
+	protected WaterMaze_Results wmr;
+	
+	protected Activity a;
 	
 	protected Boolean active;	//its a wrapper object so it gets passed by reference
 	
-	public Controller(String server, int port) {
-		this.server = server;
-		this.port = port;
+	public Controller() {
+		server = "not connected";
+		this.port = 12012;	//default port for CalVR
+		active = false;
 		
+		// IO controllers
+		calVRout = new ControllerOutput();
 	}
 	
-	public void init() throws UnknownHostException, IOException{
-		Thread t = new Thread(new SenderThread_Connect());
-		t.start();
-		//intialize input and output controllers
-		calVRin = new ControllerInput()
-		active = true;
+	public void disconnect()
+	{
+		server = "not connected";
+		try {
+			sock.close();
+			active = false;
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public void connect() throws UnknownHostException, IOException
+	{
+		new ControllerConnect().execute();
+	}
+	
+	//Synchronization method.  This way in and out are completely initialized before they are passed.
+	public void postConnect(ConnectionResults cr)
+	{
+		if(cr == null)
+		{
+			Context context = a.getApplicationContext();
+			Toast.makeText(context, "Could not connect", Toast.LENGTH_SHORT).show();
+		}
+		else{
+			//activate the controller
+			active = true;
+			sock = cr.getSock();
+			in = cr.getIn();
+			out = cr.getOut();
+			
+			if(wmc != null && wmr != null)
+			{
+				//initialize input
+				calVRin = new ControllerInput(wmc, wmr, active);
+				calVRin.newInputDevice(cr.getIn());
+				
+				//run output
+				Thread t = new Thread(calVRin);
+				t.start();
+				
+				//initialize output
+				calVRout = new ControllerOutput();
+				calVRout.newOutputDevice(cr.getOut());
+			}
+			else
+			{
+				Log.d("Controller", "tabs are null? whaaat?");
+			}
+		}
 	}
 	
 	public void send(OutboundPacket p)
 	{
-		Thread t = new Thread(new SenderThread_Send(p));
+		calVRout.newPacket(p);
+		Thread t = new Thread(calVRout);
 		t.start();
 	}
 	
-	public void read(WaterMaze_Control control)
+	public void setDestination(String s, boolean override)
 	{
-		Thread t = new Thread(new StateRequestRead(control));
-		t.start();
-	}
-	
-	public void setDestination(String s)
-	{
-		server = s;
-		try {
-			init();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		Log.d("server: " , server);
+		Log.d("s: ", s);
+		if(server != s || !active || override){
+			server = s;
+			try {
+				connect();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 		}
-		
 	}
 	
-	public class SenderThread_Connect implements Runnable
+	//needs to be async task
+	protected class ControllerConnect extends AsyncTask<Void, Void, ConnectionResults>
 	{
 		@Override
-		public void run() {
-			try{
+		protected ConnectionResults doInBackground(Void... params) 
+		{
+			Log.d("Async", "connecting");
+			try
+			{
 				if(sock != null)
+				{
+					active = false;
 					sock.close();
+					Log.d("Connection", "disconnecting");
+				}
 				try{
-					sock = new Socket(server, port);
-					out = new PrintWriter(sock.getOutputStream(), true);
-					in = new BufferedReader(new InputStreamReader(sock.getInputStream()));
+					Socket s = new Socket(server, port);
+					PrintWriter o = new PrintWriter(s.getOutputStream(), true);
+					BufferedReader i = new BufferedReader(new InputStreamReader(s.getInputStream()));
+					return (new ConnectionResults(o, i, s));
 				} catch (UnknownHostException e) {
 					Log.d("Connection", "Could not connect");
 				} catch (IOException e) {
 					e.printStackTrace();
+					Log.d("Connection", "io exception");
 				}
-				
-				//TODO: send connection type
-				ConnectionType ct = new ConnectionType("control");
-				Log.d("Connection", "this is a control socket");
-				//1
-				out.println(ct.sendStart());
-				//2
-				while(ct.hasLine())
-				{
-					out.println(ct.readLine());
-				}
-				//3
-				out.println(ct.sendEnd());
-				
 			}catch(Exception e){
-				e.printStackTrace();
+				Log.d("Connection", "if(sock != null) exception");
 			}
-		}		
-	}
-	
-	public class SenderThread_Send implements Runnable
-	{
-		protected OutboundPacket p;
+			return null;
+		}
 		
-		public SenderThread_Send(OutboundPacket p)
+		protected void onPostExecute(ConnectionResults results)
 		{
-			this.p = p;
+			Log.d("Async", "onPostExecute");
+			postConnect(results);
 		}
-		
-		@Override
-		public void run() {
-			try{
-				Log.d("Connection", "Sending " + p.toString());
-				//out = new PrintWriter(sock.getOutputStream(), true);
-				String s = "";
-				//send start
-				out.println(p.sendStart());
-				//send packets
-				while(p.hasLine())
-				{
-					s = p.readLine();
-					out.println(s);
-				}
-				//send end
-				out.println(p.sendEnd());
-			}
-			catch(Exception e1){
-				e1.printStackTrace();
-			}
-		}
-	}
-	
-	public class StateRequestRead implements Runnable
-	{
-		protected WaterMaze_Control control;
-
-		
-		public StateRequestRead(WaterMaze_Control control)
-		{
-			this.control = control;
-		}
-		@Override
-		public void run() {
-			try{
-				Log.d("Connection", "Reading State Request");
-				//1
-				String type = in.readLine();
-				Log.d("type", type);
-				//2
-				String data = in.readLine();
-				Log.d("data", data);
-				handleData(type, data);
-				//3
-				String term = in.readLine();
-				Log.d("term", term);
-				
-			}
-			catch(Exception e1){
-				e1.printStackTrace();
-			}
-		}
-		
-		protected void handleData(String type, String data)
-		{
-			//data confirmation
-			if(!type.contains("State Response"))
-			{
-				Log.d("StateResponse", "type: " + type + " data: " + data);
-			}
-			
-			if(data.contains("running"))
-			{
-				control.runningTrial();
-			}else if(data.contains("default state"))
-			{
-				control.defaultState();
-			}
-			
-		}
-				
 	}
 	
 	public String getServer()
@@ -188,5 +162,23 @@ public class Controller {
 		return server;
 	}
 	
+	public void setWMC(WaterMaze_Control wmc)
+	{
+		this.wmc = wmc;
+	}
 	
+	public void setWMR(WaterMaze_Results wmr)
+	{
+		this.wmr = wmr;
+	}
+	
+	public boolean isConnected()
+	{
+		return active.booleanValue();
+	}
+	
+	public void setActivity(Activity a)
+	{
+		this.a = a;
+	}	
 }

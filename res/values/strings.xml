@@ -19,16 +19,22 @@
 	<string name="stop">Stop</string>
 	<string name="next_trial">Next Trial</string>
 	<string name="add_trial">Add Trial</string>
-    
+	<string name="new_subject">New Subject</string>
+	<string name="new_subject_submit">Submit</string>
+	<string name="subject_name">Subject Name</string>
+	<string name="end_experiment">End Experiment</string>
+	
     <!-- results -->
-    <string name="results_trialNo">Trial Number: </string>
-    <string name="results_time">Time: </string>
+    <string name="results_trialNo">Trial Number</string>
+    <string name="results_time_elapsed">Time Elapsed</string>
     <string name="results_results_box">Results</string>
+    <string name="results_line_color">Line Color</string>
     
     <!-- connectivity -->
     <string name="dev">Dev</string>
     <string name="nexcave">NexCAVE</string>
     <string name="starcave">StarCAVE</string>
-    <string name="connect_connect">Connect</string>
+    <string name="connect_connect">Reconnect</string>
+    <string name="disconnect">Disconnect</string>
 
 </resources>

@@ -13,15 +13,7 @@ public class OutboundPacket{
 	public OutboundPacket(){
 		writeSize = 256;
 		state = 1;
-	}
-	
-	//TODO: create string method.  this is what will pass over the network
-	public String toString(){
-		return "";
-	}
-	
-	public byte[] toBytes(){
-		return new byte[6];
+		writeIndex = 0;
 	}
 	
 	public boolean hasLine()
@@ -31,7 +23,7 @@ public class OutboundPacket{
 	
 	public String sendStart()
 	{
-		//state
+		//stage
 		String s1 = new StringBuffer(new String(intToByte(1))).reverse().toString();
 		//size
 		String s2 = new StringBuffer(new String(intToByte(type.length() + 1))).reverse().toString();

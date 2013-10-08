@@ -16,15 +16,12 @@ import android.widget.RadioGroup.OnCheckedChangeListener;
 
 @SuppressLint("ValidFragment")
 public class WaterMaze_Connectivity extends Fragment {
-	private Controller sender;
+	private Controller controller;
 	protected RadioGroup networks;
-	
-	public WaterMaze_Connectivity() {
-		
-	}
+	protected int previous;
 	
 	public WaterMaze_Connectivity(Controller sender) {
-		this.sender = sender;
+		this.controller = sender;
 	}
 
 	@Override
@@ -42,8 +39,10 @@ public class WaterMaze_Connectivity extends Fragment {
 		CListener cl = new CListener();
 		networks = (RadioGroup)v.findViewById(R.id.radio_grp_connectivity);
 		networks.setOnCheckedChangeListener(cl);
-		BListener bl = new BListener(R.id.radio_grp_connectivity);
-		v.findViewById(R.id.connect_connect_button).setOnClickListener(bl);
+		BListener_Connect bl_c = new BListener_Connect();
+		v.findViewById(R.id.connect_connect_button).setOnClickListener(bl_c);
+		BListener_Disconnect bld = new BListener_Disconnect();
+		v.findViewById(R.id.connect_disconnect).setOnClickListener(bld);
 	}
 	
 	//Wrapper class
@@ -53,38 +52,41 @@ public class WaterMaze_Connectivity extends Fragment {
 		}
 		@Override
 		public void onCheckedChanged(RadioGroup arg0, int arg1) {
-			// TODO Auto-generated method stub
 			onChange(arg0, arg1);
 		}
 	}
 	
 	
-	private class BListener implements OnClickListener
-	{
-		private int radioID;
-		
-		public BListener(int num){
-			radioID = num;
-		}
-		
+	private class BListener_Connect implements OnClickListener
+	{		
 		@Override
 		public void onClick(View v) 
 		{
-			int selected = ((RadioGroup)v.findViewById(R.id.radio_grp_connectivity)).getCheckedRadioButtonId();
+			int selected = ((RadioGroup)v.getRootView().findViewById(R.id.radio_grp_connectivity)).getCheckedRadioButtonId();
 			switch(selected)
 			{
 			case R.id.radio_nexcave:
-				sender.setDestination("nexcave.ucsd.edu");
+				controller.setDestination("nexcave.ucsd.edu", true);
 				break;
 			case R.id.radio_starcave:
-				sender.setDestination("starcave.ucsd.edu");
+				controller.setDestination("starcave.ucsd.edu", true);
 				break;
 			case R.id.radio_dev:
-				sender.setDestination("137.110.118.118");
+				controller.setDestination("137.110.118.118", true);
 				break;
 			}
 		}
 		
+	}
+	
+	private class BListener_Disconnect implements OnClickListener
+	{
+		@Override
+		public void onClick(View v)
+		{
+			controller.disconnect();
+			//change the radio button?			
+		}
 	}
 	
 	
@@ -94,17 +96,18 @@ public class WaterMaze_Connectivity extends Fragment {
 		switch(arg1)
 		{
 		case R.id.radio_nexcave:
-			sender.setDestination("nexcave.ucsd.edu");
+			controller.setDestination("nexcave.ucsd.edu", false);
 			break;
 		case R.id.radio_starcave:
-			sender.setDestination("starcave.ucsd.edu");
+			controller.setDestination("starcave.ucsd.edu", false);
 			break;
 		case R.id.radio_dev:
-			sender.setDestination("137.110.118.118");
+			controller.setDestination("137.110.118.118", false);
 			break;
 			
 		}
 	}
+	
 	
 	
 }

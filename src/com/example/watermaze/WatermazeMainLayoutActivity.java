@@ -37,7 +37,12 @@ public class WatermazeMainLayoutActivity extends FragmentActivity implements
 	ViewPager mViewPager;
 	
 	//MVC controller
-	Controller sender;
+	Controller controller;
+	
+	//MVC model/views
+	protected WaterMaze_Control wm_control;
+	protected WaterMaze_Connectivity wm_connectivity;
+	protected WaterMaze_Results wm_results;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -79,8 +84,14 @@ public class WatermazeMainLayoutActivity extends FragmentActivity implements
 					.setTabListener(this));
 		}
 		
-		sender = new Controller("137.110.118.118", 12012);
-		
+		//initialize tabs
+		controller = new Controller();
+		wm_control = new WaterMaze_Control(controller);
+		controller.setWMC(wm_control);
+		wm_results = new WaterMaze_Results(controller);
+		controller.setWMR(wm_results);
+		wm_connectivity = new WaterMaze_Connectivity(controller);
+		controller.setActivity(this);
 	}
 
 	@Override
@@ -123,25 +134,25 @@ public class WatermazeMainLayoutActivity extends FragmentActivity implements
 			// getItem is called to instantiate the fragment for the given page.
 			// Return a DummySectionFragment (defined as a static inner class
 			// below) with the page number as its lone argument.
-			Fragment fragment;
+			Fragment fragment;	//TODO: pretty sure this is what is causing me to make new tabs all the time.
 			Bundle args =  new Bundle();
 			switch(position){
 			case 0:{
 				//control
-				fragment = new WaterMaze_Control(sender);
+				fragment = wm_control;
 				args.putInt(DummySectionFragment.ARG_SECTION_NUMBER, position + 1);
 				fragment.setArguments(args);
 				break;
 			}
 			case 1:
 				//results
-				fragment = new WaterMaze_Results(sender);
+				fragment = wm_results;
 				args.putInt(DummySectionFragment.ARG_SECTION_NUMBER, position + 1);
 				fragment.setArguments(args);
 				break;
 			case 2:
 				//connectivity
-				fragment = new WaterMaze_Connectivity(sender);
+				fragment = wm_connectivity;
 				args.putInt(DummySectionFragment.ARG_SECTION_NUMBER, position + 1);
 				fragment.setArguments(args);
 				break;
