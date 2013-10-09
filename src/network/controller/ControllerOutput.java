@@ -2,15 +2,15 @@ package network.controller;
 
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.concurrent.atomic.AtomicReference;
 
 import android.util.Log;
 import network.packets.outgoing.OutboundPacket;
 
 public class ControllerOutput implements Runnable{
 	protected PrintWriter out;
-	protected OutboundPacket currentPacket;
 	protected boolean usable;
-	private ArrayList<OutboundPacket> packets;
+	private volatile ArrayList<OutboundPacket> packets;
 	
 	public ControllerOutput() {
 		this.out = null;
@@ -21,24 +21,29 @@ public class ControllerOutput implements Runnable{
 	@Override
 	public void run() {
 		try{
-			Log.i("ControllerOutput", "Sending " + currentPacket.toString());
-			if(out == null)
+			while(true)
 			{
-				Log.d("ControllerOutput", "printwriter is null");
+				while(packets.size() > 0)
+				{
+					OutboundPacket currentPacket = packets.remove(0);
+					
+					Log.i("ControllerOutput", "Sending " + currentPacket.toString());
+					String s = "";
+					
+					//send start
+					out.println(currentPacket.sendStart());
+					
+					//send packets
+					while(currentPacket.hasLine())
+					{
+						s = currentPacket.readLine();
+						out.println(s);
+					}
+					
+					//send end
+					out.println(currentPacket.sendEnd());
+				}
 			}
-			String s = "";
-			
-			//send start
-			out.println(currentPacket.sendStart());
-			//send packets
-			while(currentPacket.hasLine())
-			{
-				s = currentPacket.readLine();
-				out.println(s);
-			}
-			//send end
-			out.println(currentPacket.sendEnd());
-			usable = true;
 		}
 		catch(Exception e1){
 			e1.printStackTrace();
@@ -47,7 +52,7 @@ public class ControllerOutput implements Runnable{
 	}
 
 	public void newPacket(OutboundPacket p) {
-		currentPacket = p;
+		packets.add(p);
 	}
 	
 	public void newOutputDevice(PrintWriter out)

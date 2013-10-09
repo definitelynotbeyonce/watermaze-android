@@ -6,6 +6,7 @@ import java.util.concurrent.atomic.AtomicReference;
 
 import network.packets.incoming.CueList;
 import network.packets.incoming.DataPoint;
+import network.packets.incoming.GeneralComm;
 import network.packets.incoming.InboundPacket;
 import network.packets.incoming.StateUpdate;
 import network.packets.incoming.TrialSetup;
@@ -99,6 +100,10 @@ public class ControllerInput implements Runnable {
 		}else if(type.equals("Cue List"))
 		{
 			ip = new CueList(wmc);
+		}else if(type.equals("General Comm"))
+		{
+			Log.i("ControllerInput", "General Comm");
+			ip = new GeneralComm(wmc, wmr);
 		}
 		
 		return ip;

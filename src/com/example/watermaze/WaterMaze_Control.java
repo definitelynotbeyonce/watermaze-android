@@ -57,7 +57,9 @@ public class WaterMaze_Control extends Fragment
 		//add the buttons to the collection
 		initCollection(v);
 		initListeners(v);
+		stateManager.changeState("default state");
 		requestState();
+		requestCueList();
         return v;
     }
 	
@@ -149,19 +151,15 @@ public class WaterMaze_Control extends Fragment
 			//request from CalVR that it send you the state of WaterMaze
 			StateRequest sr = new StateRequest();
 			controller.send(sr);
-			
-			//the controller will handle the response
 		}
 	}
 	
-	public void requestCues()
+	public void requestCueList()
 	{
 		if(controller.isConnected()){
 			//request from CalVR that it send you the state of WaterMaze
 			CueListRequest clr = new CueListRequest();
 			controller.send(clr);
-			
-			//the controller will handle the response
 		}
 	}
 	
@@ -211,26 +209,31 @@ public class WaterMaze_Control extends Fragment
 				break;
 			default:
 				break;
-			}
-			
+			}	
 		}
-
-		
-		
 	}
 	
 	public void setState(String state)
 	{
-		if(stateManager.changeState(state))
-			requestCues();
-		
+		if(!stateManager.changeState(state))
+		{
+			removeCueList();
+		}
+		else if(((LinearLayout)v.findViewById(R.id.watermaze_control_cue_list)).getChildCount() == 0)
+		{
+			requestCueList();
+		}
+		else
+		{
+			enableDisableCueList(stateManager.isCueListEnabled());
+		}
 	}
 
 	public Controller getController() {
 		return controller;
 	}
 	
-	public void addCueList(CueList list)
+	protected void removeCueList()
 	{
 		LinearLayout main = (LinearLayout)v.findViewById(R.id.watermaze_control_cue_list);
 		if (null != main && main.getChildCount() > 0) {                 
@@ -240,13 +243,19 @@ public class WaterMaze_Control extends Fragment
 		        e.printStackTrace();
 		    }
 		}
-		
+	}
+	
+	public void addCueList(CueList list)
+	{
+		removeCueList();
+		LinearLayout main = (LinearLayout)v.findViewById(R.id.watermaze_control_cue_list);
 		for(int i = 0; i < list.list.size(); ++i)
 		{
 			ToggleButton button = new ToggleButton(v.getContext());
 			button.setTextOff(list.list.get(i).buttonText);
 			button.setTextOn(list.list.get(i).buttonText);
 			button.setChecked(list.list.get(i).toggle);
+			button.setEnabled(stateManager.isCueListEnabled());
 			
 			button.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
 			    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -259,18 +268,15 @@ public class WaterMaze_Control extends Fragment
 			//add it to the linear layout
 			main.addView(button);
 		}
-		
-		if(!stateManager.isCueListEnabled())
-			disableCueList();
 	}
 	
-	public void disableCueList()
+	public void enableDisableCueList(boolean state)
 	{
 		LinearLayout main = (LinearLayout)v.findViewById(R.id.watermaze_control_cue_list);
 		for(int i = 0; i < main.getChildCount(); ++i)
 		{
 			Button b = (Button)main.getChildAt(i);
-			b.setEnabled(false);
+			b.setEnabled(state);
 		}
 	}
 
@@ -279,8 +285,6 @@ public class WaterMaze_Control extends Fragment
 			//request from CalVR that it send you the state of WaterMaze
 			NewSubject ns = new NewSubject(name);
 			controller.send(ns);
-			
-			//the controller will handle the response
 		}
 		Log.i("NewSubject", name);
 	}

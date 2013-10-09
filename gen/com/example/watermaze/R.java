@@ -171,7 +171,7 @@ public final class R {
         public static final int thumbnail_selected=0x7f020005;
     }
     public static final class id {
-        public static final int action_settings=0x7f090021;
+        public static final int action_settings=0x7f090022;
         public static final int addTrial=0x7f090011;
         public static final int connect_connect_button=0x7f090008;
         public static final int connect_disconnect=0x7f090009;
@@ -181,30 +181,31 @@ public final class R {
         public static final int newSubjectSubmit=0x7f090003;
         public static final int nextParadigm=0x7f09000c;
         public static final int nextTrial=0x7f090010;
-        public static final int pager=0x7f090014;
+        public static final int pager=0x7f090015;
         public static final int previousParadigm=0x7f09000d;
         public static final int radio_dev=0x7f090005;
         public static final int radio_grp_connectivity=0x7f090004;
         public static final int radio_nexcave=0x7f090006;
         public static final int radio_starcave=0x7f090007;
-        public static final int resluts_trialNo_prompt=0x7f090018;
-        public static final int results_hsv=0x7f09001e;
-        public static final int results_line_color_prompt=0x7f090019;
-        public static final int results_results_box=0x7f09001b;
-        public static final int results_results_box_prompt=0x7f09001c;
-        public static final int results_table_header=0x7f090017;
-        public static final int results_thumbnails=0x7f09001f;
-        public static final int results_time_elapsed_prompt=0x7f09001a;
-        public static final int results_trial_legend=0x7f090016;
-        public static final int results_view=0x7f09001d;
+        public static final int resluts_trialNo_prompt=0x7f090019;
+        public static final int results_hsv=0x7f09001f;
+        public static final int results_line_color_prompt=0x7f09001a;
+        public static final int results_results_box=0x7f09001c;
+        public static final int results_results_box_prompt=0x7f09001d;
+        public static final int results_table_header=0x7f090018;
+        public static final int results_thumbnails=0x7f090020;
+        public static final int results_time_elapsed_prompt=0x7f09001b;
+        public static final int results_trial_legend=0x7f090017;
+        public static final int results_view=0x7f09001e;
+        public static final int scrollView1=0x7f090013;
         public static final int section_label=0x7f090000;
         public static final int startStop=0x7f09000f;
         public static final int subjectName=0x7f090002;
         public static final int textView1=0x7f090001;
-        public static final int thumbnail_selected_border=0x7f090020;
-        public static final int watermaze_control_cue_list=0x7f090013;
+        public static final int thumbnail_selected_border=0x7f090021;
+        public static final int watermaze_control_cue_list=0x7f090014;
         public static final int watermaze_control_layout=0x7f09000a;
-        public static final int watermaze_results_layout=0x7f090015;
+        public static final int watermaze_results_layout=0x7f090016;
     }
     public static final class layout {
         public static final int fragment_watermaze_main_layout_dummy=0x7f030000;

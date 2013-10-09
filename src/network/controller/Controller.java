@@ -82,13 +82,19 @@ public class Controller {
 				calVRin = new ControllerInput(wmc, wmr, active);
 				calVRin.newInputDevice(cr.getIn());
 				
-				//run output
-				Thread t = new Thread(calVRin);
-				t.start();
-				
 				//initialize output
 				calVRout = new ControllerOutput();
 				calVRout.newOutputDevice(cr.getOut());
+				
+				//run input thread
+				Thread tIn = new Thread(calVRin);
+				tIn.start();
+				
+				//run output thread
+				Thread tOut = new Thread(calVRout);
+				tOut.start();
+				
+				
 			}
 			else
 			{
@@ -100,8 +106,6 @@ public class Controller {
 	public void send(OutboundPacket p)
 	{
 		calVRout.newPacket(p);
-		Thread t = new Thread(calVRout);
-		t.start();
 	}
 	
 	public void setDestination(String s, boolean override)
